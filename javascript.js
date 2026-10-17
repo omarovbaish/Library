@@ -82,47 +82,32 @@ function create_card(book){
     return book_shown;
 }
 
-//Correct number of page after change
-//Must be called after every add/removal
-function correct_adding(){
-    const last_option = num_pages.lastElementChild;
-    const capacity =  Number(last_option.value) * book_window.number_per_page;
-    if (capacity < books.length){
-        const option = document.createElement("option")
-        option.value = Math.ceil(books.length / book_window.number_per_page);
-        if (books.length === 1) num_pages.selectedIndex = 1;//Remove sentinel for user;
-        option.textContent = option.value;
-        num_pages.append(option);
-    }
-}
-function correct_removal(){
-    const last_option = num_pages.lastElementChild 
-    const books_before_last_page = (Number(last_option.value) - 1) * book_window.number_per_page
-    //Can never be true for placeholder.
-    if (books_before_last_page >= books.length){
-        if (num_pages.value === last_option.value){
-            num_pages.selectedIndex = last_option.value-1; //Go back one step. 
-        }
-        last_option.remove() //We have more pages then we need
-    } 
-}    
 function rewrite_page_numbers(){
+    const index = Number(num_pages.value);//Save index
     const placeholder = num_pages.firstElementChild; //Save placeholder
     num_pages.replaceChildren() //Clear previous options
     num_pages.append(placeholder);
-    //book_window.number_per_page >= 1 - see HTML
     for (let index=0; index < books.length; index+=book_window.number_per_page){
         let option = document.createElement("option");
         option.value = Math.floor(index/book_window.number_per_page) + 1;
         option.textContent = option.value;
         num_pages.append(option);
     }
-    //Place user on first page if it exists.
-    if (num_pages.lastElementChild !== placeholder) num_pages.value = 1;
+    //Place user on his page
+    //Check if page exists
+    //Number conversion is not strict because of < but added for clarity
+    if (index < Number(num_pages.lastElementChild.value)){
+        num_pages.value = index === 0? 1 : index//0 is not less then 0. So setting 1 is legitimate
+    }else{
+        //This one for removing book will always go 1 page down. So no special case needed thus removing needing in boolean argument
+        //If we have no pages left it will place placeholder since 0 is not less then 0.
+        //If index === num_pages.lastElementChild.value this works correctly.
+        num_pages.value = num_pages.lastElementChild.value;
+    }
 }
 function check_add(book){
     books.push(book);
-    correct_adding();
+    rewrite_page_numbers();
     render();
 }
 //Perform sorting and render cards
@@ -244,7 +229,7 @@ delete_item.addEventListener("click",(e)=>{
     const book = current_books_showed.get(book_sidebar.book_watched);
     current_books_showed.delete(book_sidebar.book_watched);
     books.splice(books.findIndex((elem) => elem.id === book.id),1);
-    correct_removal();
+    rewrite_page_numbers();
     render(); //This will close sidebar and rerender page
     modalRemove.close();
 });
