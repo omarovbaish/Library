@@ -1,0 +1,321 @@
+/* Minimal reset */
+*,
+*::after,
+*::before{
+    box-sizing: border-box;
+}
+body{
+    line-height: 1.25;
+    margin:0;
+    padding: 0;
+}
+select,
+button,
+textarea,
+input{
+    font-size: inherit;
+    font-family: inherit;
+}
+ul {
+    list-style-type: none;
+}
+img, svg, video { display: block;max-width: 100%}
+ul > li > a,
+ol > li > a{
+    text-decoration: none;
+}
+ul,ol{
+    padding-left: 0;
+    margin: 0;
+}
+p,h1,h2,h3,h4,h5,h6{
+    margin: 0;
+    padding: 0;
+    font-weight: unset;
+}
+h1{
+    font-size: 1.5rem;
+}
+h2{
+    font-size: 1.2rem;
+}
+h3{
+    font-size: 1rem;
+}
+/* Main styles */
+:root{
+    font-size: clamp(0.8em,0.6em + 0.5svw, 1.6em);
+    --normal-gap: 1rem;
+    --normal-top-margin: 1.5em;
+    --normal-increase: 1.1em;
+    --author-background-color: burlywood;
+    --font-fallback: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+body{
+    font-family: "Edu QLD Hand", var(--font-fallback);
+}
+button {
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    margin: 0;
+}
+a:link{
+    background-color: unset;
+}
+a:visited{
+    background-color:blueviolet;
+}
+a:hover,
+button:hover,
+select:hover{
+    font-size: var(--normal-increase);
+}
+/*Do not jump in size in sidebar or dialog*/
+dialog.modal.main select:hover,
+.book-sidebar select:hover{
+    font-size: 1em;
+}
+/* Utility classes */
+.flex {
+    display: flex;
+    gap: var(--normal-gap);
+}
+/*Ignore absolutely positioned elems*/
+.stack > :not(:first-child):not(.positioned-absolute){
+    margin-top: var(--normal-top-margin);
+}
+
+.hidden {
+    display: none;
+}
+.grid {
+    display: grid;
+    gap: var(--normal-gap);
+}
+.text-hidden{
+    display: inline-block;
+    height: 1px;
+    width: 1px;
+    margin-left: -1px;
+    overflow: hidden;
+}
+body:has(dialog:modal) {
+  overflow: hidden;
+}
+/* Sticky header */
+header{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.main-links {
+    background-color: grey;
+    position: relative;
+}
+.links{
+    justify-content: space-between;
+    padding: 1em;
+}
+.main-links.removed > .links{
+    display: none;
+}
+.main-links.removed > .toggle_bar{
+    position: relative;
+    inline-size: fit-content;
+}
+.toggle_bar::after{
+    content: "▼";
+}
+.toggle_bar{
+    background-color:azure;
+    color: red;
+    cursor: pointer;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0.3em;
+}
+.site-nav > li > a{
+    display: inline-block;
+    padding: 0.5em 1em;
+    background-color: #cc6b5a;
+    color: white;
+}
+.greeting{
+    background-color:var(--author-background-color);
+    padding: 2.5em;
+}
+
+/* Main section */
+.book-section{
+    padding-inline: 1.5em;
+    padding-block: 1.5em 0.5em;
+    background-color: rgb(197, 182, 182);
+    --card-width: 10em;
+    --card-height: 10em;
+    --card-padding: 0.5em;
+    --text-border: 2px;
+    --card-total-width: calc(var(--card-width) + 2*var(--card-padding));
+    --card-total-height: calc(var(--card-height) + 2*var(--card-padding));
+    --visible-rows: 4;
+}
+.book-window{
+    grid-template-columns: repeat(auto-fill,var(--card-total-width));
+    grid-template-rows: repeat(var(--visible-rows),var(--card-total-height));
+    grid-auto-rows: var(--card-total-height);
+    background-color:azure;
+    overflow: auto;
+    max-height: calc(var(--card-total-height) * var(--visible-rows)
+    + var(--normal-gap)* (var(--visible-rows) - 1));
+}
+.book-main{
+    gap: 2px;
+}
+.book-list{
+    flex: 2;
+}
+.book-sidebar{
+    flex: 1;
+    background-color:aquamarine;
+    overflow: auto;
+    contain: size;
+    position: relative;
+    padding: 1em;
+}
+
+.page-numbers-container{
+    width: fit-content;
+    margin-inline: auto;
+    padding: 0.5em;
+    font-family: var(--font-fallback);
+}
+.label{
+    font-size: 0.7rem;
+    align-items: center;
+    padding: 0.5em;
+    background-color: rgb(191, 216, 216);
+}
+.add-book{
+   margin-inline: auto 0;
+}
+dialog.modal{
+    padding: 1em;
+    width: 70vw;
+    overflow: auto;
+    background-color:beige;
+}
+dialog.modal::backdrop{
+     background: rgba(0, 0, 0, 0.3);
+}
+.submit-new-book,
+.submit-changes{
+    background-color:aquamarine;
+    color: red;
+    display: block;
+}
+.grid.inputs{
+    grid-template-columns: repeat(2,max-content)
+}
+dialog.modal  input,
+dialog.modal  select,
+dialog.modal  textarea{
+    border-radius: 0.5em;
+    padding: 0.5em;
+    border: 1px solid black;
+    min-width: 10em;
+}
+#review{
+    height: 8em;
+}
+dialog.modal > form{
+    padding: 1em;
+}
+.card{
+    position: relative;
+    background-color:bisque;
+    padding: var(--card-padding);
+    text-align: center;
+    width: var(--card-total-width);
+    height: var(--card-total-height);
+}
+.card:hover{
+    font-size: 1em;/*We do not wanna resize our grid or deal width overflow*/
+    /*Be sure to control color of books width shadow coloring*/
+    box-shadow: inset rgba(52, 178, 163, 0.5) 0 0 calc(var(--card-padding)*2) var(--card-padding),
+    inset rgb(167, 52, 178) 0 0 calc(var(--card-padding)*2) var(--card-padding);
+}
+.card-image{
+    height: 100%;
+    width: 100%;
+}
+.card-text{
+    white-space: nowrap;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 0.5em;
+    color: red;
+    padding: var(--card-padding);
+    width: 100%; /*Calculates from parent's padding box so this works*/
+    overflow: hidden;
+    border: var(--text-border) solid rgba(0, 0, 0, 0.1);
+    text-overflow:ellipsis;
+}
+
+.close{
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    padding-inline: 0 8px;
+    padding-block: 0 8px;
+    background-color: inherit;
+    border: none;
+    text-align: center;
+}
+.close::after{
+    content: "\2716";
+    font-size: 0.8rem;
+    color: black;
+}
+.useful-tools{
+    background-color:var(--author-background-color);
+    padding: 2em;
+    line-height: 1.5;
+    --stat-card-height: 40lvh;
+}
+#number-of-elems-per-page{
+    padding: 0.5em;
+    border-radius: 8px;
+    border: 3px solid rgba(0, 0, 0, 0.3);
+}
+.stats-container{
+    min-height: var(--stat-card-height);
+}
+.stats-container > div{
+    flex: 1;
+    background-color:ivory;
+    padding: 8px;
+}
+/*Footer*/
+.footer-text{
+    color: white;
+    margin: 0 auto;
+    width: fit-content;
+}
+footer{
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(118, 102, 102);
+    min-height: 10svh;
+}
+dialog.modal.delete{
+    font-size: 1.5rem;
+}
+.delete-item,
+.cancel-delete{
+    padding-inline: 1.5em;
+}

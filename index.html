@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Edu+QLD+Hand:wght@400..700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width" initial-scale=1>
+<title>Library</title>
+<script src="javascript.js" defer></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav class="main-links">
+            <div class="links flex">
+            <div class="left-links">
+                <ul class="flex site-nav">
+                <li><a href="#">About us</a></li>
+                <li><a href="#">News</a></li>
+                <li><a href="#">Contacts</a></li>
+                </ul>
+            </div>
+            <div class="right-links">
+                <ul class="flex site-nav">
+                <li><a href="#">Follow us</a></li>
+                </ul>
+            </div>
+            </div>
+            <button class="toggle_bar positioned-absolute">Toggle bar</button>
+    </nav>
+</header>
+    <main>
+        <section class="greeting">
+        <h1>Book library</h1>
+        <p>
+            This is your book library. You can add books and rate them! Click here to get to tutorial:
+            <a href="#">Tutorial</a>.
+            <br>
+            Enjoy yourself! Build your own library and finally decide which books are best in your opinion!
+            It may be tough though.
+        </p>
+        </section>
+        <section class="book-section">
+            <div class="book-main flex">
+            <div class="book-list">
+                <div class="label flex">
+                    Your books!
+                    <button class="add-book">Add Book</button>
+                    <div>
+                    <label for="sorting-books">Sorting by:</label>
+                        <select id="sorting-books">
+                            <option value="initial">Order added</option>
+                            <option value="rating">Rating</option>
+                            <option value="favorite">Favorite</option>
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                            <option value="num-pages">Number of pages</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="book-window grid">
+                </div>
+            </div>
+            <div class="book-sidebar hidden">
+                <form class="stack">
+                <div class="grid inputs">
+                <label for="sidebar-title">Title</label>
+                <input id="sidebar-title" required minlength="1"maxlength="60">
+                <label for="sidebar-author">Author</label>
+                <input id="sidebar-author" required maxlength="60">
+                <label for="sidebar-rating">Rating</label>
+                <select id="sidebar-rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                </select>
+                <label for="sidebar-favorite">Favorite</label>
+                <select id="sidebar-favorite">
+                            <option value="false">false</option>
+                            <option value="true">true</option>
+                </select>
+                <label for="sidebar-review">Review</label>
+                <textarea placeholder="Enter text" rows="5" id="sidebar-review" maxlength="480"></textarea>
+                <label for="sidebar-status">Status</label>
+                <select id="sidebar-status">
+                            <option value="Completed">Completed</option>
+                            <option value="Planned">Planned</option>
+                            <option value="Reading">Reading</option>
+                            <option value="On-Hold">On-Hold</option>
+                            <option value="Dropped">Dropped</option>
+                </select>
+                <label for="sidebar-num-pages" >Number of pages</label>
+                <input id="sidebar-num-pages" type="number" min="1" step="1" max="100000" required>
+                </div>
+                <button type="submit" class="submit-changes">Submit your changes</button>
+                <button type="button" class="clear-input">Clear</button>
+                <button type="button" class="remove-item">Remove</button>
+                </form>
+                <button class="close positioned-absolute"><span class="text-hidden">Close form</span></button>
+            </div>
+            </div>
+        <div class="page-numbers-container">
+                <label for="page-numbers">Page:</label>
+                <select id="page-numbers">
+                    <option hidden disabled selected value="0">Please add book</option>
+                </select>
+        </div>
+        </section>
+        <section class="useful-tools">
+            <p>Here we are giving you out some useful tools with which you can actually use libary better:
+                <br>
+                You have two tools total at your discretion:
+                <br>
+                1.With first you can specify how many items can be on your page at once.
+                <br>
+                2.With second you can choose to see some useful stats we have gathered for you.
+                <br>
+            </p>
+            <div class="stack">
+            <form class="number-of-elems-on-page">
+            <label for>Choose how many elements should appear on your page</label>
+            <div>
+            <input id="number-of-elems-per-page" type="number"  min="1" max="100" step="1" value="50"required>
+            </div>
+            </form>
+            <div class="stats">
+                <label for="user_stats_choice">Choose what stats you want to see</label>
+                <select id="user_stats_choice">
+                    <option value="this_page">Stats about this_page</option>
+                    <option value="all_pages">Stats overall</option>
+                </select>
+            </div>
+            <div class="flex stats-container hidden">
+                <div class="stats-favorite stack">
+                    <p>Favorites</p>
+                </div>
+                <div class="stats-rating stack">
+                    <p>Rating</p>
+                </div>
+                <div class="stats-num_pages stack">
+                    <p>Number of pages</p>
+                </div>
+            </div>
+            </div>
+        </section>
+    </main>
+<footer class="flex">
+    <div class="footer-text">All right are reserved @2026</div>
+</footer>
+<dialog class="modal stack main">
+    <form class="stack">
+    <div class="grid inputs">
+    <label for="modal-title">Title</label>
+    <input id="modal-title" required maxlength="60">
+    <label for="modal-author">Author</label>
+    <input id="modal-author" required maxlength="60">
+    <label for="modal-rating">Rating</label>
+    <select id="modal-rating">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+    </select>
+    <label for="modal-favorite">Favorite</label>
+        <select id="modal-favorite">
+                            <option value="false">false</option>
+                            <option value="true">true</option>
+        </select>
+    <label for="modal-review">Review</label>
+        <textarea placeholder="Enter text" rows="5" id="modal-review" maxlength="480"></textarea>
+    <label for="modal-status">Status</label>
+        <select id="modal-status">
+                            <option value="Completed">Completed</option>
+                            <option value="Planned">Planned</option>
+                            <option value="Reading">Reading</option>
+                            <option value="On-Hold">On-Hold</option>
+                            <option value="Dropped">Dropped</option>
+        </select>
+    <label for="modal-num-pages" >Number of pages</label>
+        <input id="modal-num-pages" type="number" min="1" step="1" max="100000" required>
+    </div>
+    <button type="submit" class="submit-new-book">Add new book</button>
+    <button type="button" class="clear-input">Clear</button>
+    </form>
+    <button class="close positioned-absolute"><span class="text-hidden">close form</span></button>
+</dialog>
+<dialog class="modal delete">
+    <div>Are you sure you want to do that? Click yes or no</div>
+    <button class="delete-item">Yes</button>
+    <button class="cancel-delete">No</button>
+</dialog>
+</body>
+</html>
