@@ -74,7 +74,7 @@ function create_card(book){
     book_image.src = book.img; //Make sure image is not jumping in rendering. So do not choose img in create_card
     book_image.alt = `Book named: ${book.title}`;
     book_image.classList.add("card-image");
-    const text = document.createElement("div");
+    const text = document.createElement("span");
     text.classList.add("card-text");
     text.textContent = book.title;
     book_shown.appendChild(text);
