@@ -127,7 +127,7 @@
             </p>
             <div class="stack">
             <form class="number-of-elems-on-page">
-            <label for>Choose how many elements should appear on your page</label>
+            <label for="number-of-elems-per-page">Choose how many elements should appear on your page</label>
             <div>
             <input id="number-of-elems-per-page" type="number"  min="1" max="100" step="1" value="50"required>
             </div>
@@ -141,13 +141,31 @@
             </div>
             <div class="flex stats-container hidden">
                 <div class="stats-favorite stack">
-                    <p>Favorites</p>
+                    <div>
+                        <p>Favorites</p>
+                        <div class="favorites-stats"></div>
+                        <div class="not_favorites-stats"></div>
+                        <div class="average_favorites_stats"></div>
+                    </div>
                 </div>
                 <div class="stats-rating stack">
-                    <p>Rating</p>
+                    <div>
+                        <p>Rating</p>
+                        <div class="stars">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        </div>
+                        <div class="average_rating"></div>
+                    </div>
                 </div>
                 <div class="stats-num_pages stack">
-                    <p>Number of pages</p>
+                    <div>
+                        <p>Number_of_pages</p>
+                        <div class="average_num_pages"></div>
+                    </div>
                 </div>
             </div>
             </div>

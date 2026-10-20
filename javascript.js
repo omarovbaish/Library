@@ -21,11 +21,7 @@ const cancel_delete = document.querySelector(".cancel-delete");
 const form_number_of_elems = document.querySelector(".number-of-elems-on-page");
 const input_number_of_elems = document.querySelector("#number-of-elems-per-page");
 const user_stats_choice = document.querySelector("#user_stats_choice");
-const stats_container = document.querySelector(".stats-container");
-const stats_favorite = document.querySelector(".stats-favorite");
-const stats_rating = document.querySelector(".stats-rating");
-const stats_num_pages = document.querySelector(".stats-num_pages");
-
+/*They are verbose. But also most robust.*/
 /*Modal Input Fields*/
 const modal_title = document.querySelector("#modal-title");
 const modal_author = document.querySelector("#modal-author");
@@ -81,7 +77,24 @@ function create_card(book){
     book_shown.appendChild(book_image);
     return book_shown;
 }
-
+function render_cards(){
+    book_sidebar.classList.add("hidden"); //Since we are rerendering page this elem would not exist.Prevent errors by submitting to non-existing book                    
+    form_sidebar.reset();
+    book_sidebar.book_watched = undefined;
+    current_books_showed.clear();
+    book_window.replaceChildren(); //Clear grid
+    const new_books = sorted_books.slice((num_pages.value - 1)* book_window.number_per_page, num_pages.value * book_window.number_per_page);
+    book_window.append(...new_books.map(function (elem){
+        const card = create_card(elem); //Check add is not needed
+        current_books_showed.set(card,elem);
+        return card;
+    }));
+}
+function render_all(){
+    render_cards()
+    //Make sure to update_stats. May be optimized in future(to update only this page stats.Thought is not compatible with current version)
+    render_stats();
+}
 function rewrite_page_numbers(){
     const index = Number(num_pages.value);//Save index
     const placeholder = num_pages.firstElementChild; //Save placeholder
@@ -138,8 +151,7 @@ function render(){
             sorted_books = books.toSorted((a,b)=> b.num_pages - a.num_pages);
             break;
     }
-    const customEvent = new Event("change",{bubbles: true});
-    num_pages.dispatchEvent(customEvent);
+    render_all();
 }
 /*Event Listeners */
 form.addEventListener("submit",(e) =>{
@@ -184,7 +196,7 @@ form_sidebar.addEventListener("submit",(e)=>{
     book.review = sidebar_review.value;
     book.status = sidebar_status.value;
     book.num_pages = Number(sidebar_num_pages.value);
-    render(); //Rerender page. This will ensure title changes. May be optimized in future(just changing title)
+    render();
 });
 clear_button_sidebar.addEventListener("click",(e)=>{
     form_sidebar.reset();
@@ -196,19 +208,7 @@ remove_bar.addEventListener("click", function() {
     nav_bar.classList.toggle("removed");
 });
 num_pages.addEventListener("change",(e)=>{
-    book_sidebar.classList.add("hidden"); //Since we are rerendering page this elem would not exist.Prevent errors by submitting to non-existing book                    
-    form_sidebar.reset();
-    book_sidebar.book_watched = undefined;
-    current_books_showed.clear();
-    book_window.replaceChildren(); //Clear grid
-    const new_books = sorted_books.slice((num_pages.value - 1)* book_window.number_per_page, num_pages.value * book_window.number_per_page);
-    book_window.append(...new_books.map(function (elem){
-        const card = create_card(elem); //Check add is not needed
-        current_books_showed.set(card,elem);
-        return card;
-    }));
-    //Make sure to update_stats. May be optimized in future(to update only this page stats.Thought is not compatible with current version)
-    user_stats_choice.dispatchEvent(new Event("change",{bubbles: true})); 
+    render_all();
 });
 closeButtonDialog.addEventListener("click",(e) =>{
     modalWindow.close();
@@ -240,91 +240,56 @@ form_number_of_elems.addEventListener("submit",(e)=>{
     rewrite_page_numbers();
     render();
 })
-user_stats_choice.addEventListener("change",(e)=>{
+function compute_stats(subject){
+    const size = subject.length;
+    let favorites = 0;
+    let not_favorites = 0;
+    let stars = [0,0,0,0,0]
+    let average_rating = 0;
+    let average_num_pages = 0;
+    for (const elem of subject){
+        if (elem.favorite){
+            favorites += 1;
+        }else{
+            not_favorites += 1;
+        }
+        average_rating += elem.rating;
+        average_num_pages += elem.num_pages;
+        stars[elem.rating - 1] += 1;
+    }
+    let favorites_rate = (favorites/size * 100); //size is always greater then zero
+    average_rating = average_rating / size;//size is always greater then zero
+    average_num_pages = average_num_pages / size; //size is always greater then zero
+    return [favorites,not_favorites,favorites_rate,stars.reverse(),average_rating,average_num_pages]
+}
+const stats_container = document.querySelector(".stats-container");
+const stats_favorite = document.querySelector(".stats-favorite");
+const stars_container = document.querySelector(".stars");
+const stats_num_pages = document.querySelector(".stats-num_pages");
+const num_favorites = document.querySelector(".stats-favorite .favorites-stats");
+const num_not_favorites =  document.querySelector(".stats-favorite .not_favorites-stats");
+const average_favorites_stats = document.querySelector(".stats-favorite .average_favorites_stats")
+const average_rating_stats = document.querySelector(".stats-rating .average_rating")
+const average_num_pages_stats = document.querySelector(".average_num_pages");
+function render_stats(){
     //Ensure when there is no elems on page stats will be hidden. 
     if (books.length < 1) {
         stats_container.classList.add("hidden");
         return;
     }
     stats_container.classList.remove("hidden"); //reveal stats
-    //In future for optimization divs must be transported to HTML
     const subject = user_stats_choice.value === "all_pages" ? books : Array.from(current_books_showed.values());
-    const size = subject.length;
-    let favorites = 0;
-    let not_favorites = 0;
-    let favorites_rate;
-    for (const elem of subject){
-        if (elem.favorite){ //If you want to just make favorite + Boolean(elem.favorite) for conciness
-            favorites += 1;
-        }else{
-            not_favorites += 1;
-        }
+    const [favorites,not_favorites,favorites_rate,stars,average_rating,average_num_pages] = compute_stats(subject)
+    average_favorites_stats.textContent = `Favorites_rate: ${favorites_rate.toFixed(2)}%`;
+    num_favorites.textContent = `Number of favorites: ${favorites}`;
+    num_not_favorites.textContent = `Number of not favorites: ${not_favorites}`;
+    const stars_html = stars_container.children;
+    for (let i = stars_html.length-1; i >= 0; i--){
+        stars_html[i].textContent = `${"⭐".repeat(5-i)}:  ${stars[i]}`;
     }
-    favorites_rate = (favorites/size * 100); //size is always greater then zero
-    const favorites_rate_string = document.createElement("div");
-    const favorites_string = document.createElement("div");
-    const not_favorites_string = document.createElement("div");
-    favorites_rate_string.textContent = `Favorites_rate: ${favorites_rate.toFixed(2)}%`;
-    favorites_string.textContent = `Number of favorites: ${favorites}`;
-    not_favorites_string.textContent = `Number of not favorites: ${not_favorites}`;
-    stats_favorite.replaceChildren(
-        favorites_rate_string,
-        favorites_string,
-        not_favorites_string,
-    )
-    let five_stars = 0;
-    let four_stars = 0;
-    let three_stars = 0;
-    let two_stars = 0;
-    let one_star = 0;
-    let average_rating = 0;
-    for (const elem of subject){
-        average_rating += elem.rating;
-        switch(elem.rating){
-            case 5:
-                five_stars += 1;
-                break;
-            case 4:
-                four_stars += 1;
-                break;
-            case 3:
-                three_stars += 1;
-                break;
-            case 2:
-                two_stars += 1;
-                break;
-            case 1:
-                one_star += 1;
-                break;
-        }
-    }
-    average_rating = average_rating / size;//size is always greater then zero
-    const five_stars_string = document.createElement("div")
-    const four_stars_string = document.createElement("div")
-    const three_stars_string = document.createElement("div")
-    const two_stars_string = document.createElement("div")
-    const one_star_string = document.createElement("div")
-    const average_rating_string = document.createElement("div");
-    five_stars_string.textContent = `"⭐⭐⭐⭐⭐":  ${five_stars}`;
-    four_stars_string.textContent = `"⭐⭐⭐⭐":  ${four_stars}`;
-    three_stars_string.textContent = `"⭐⭐⭐":  ${three_stars}`;
-    two_stars_string.textContent = `"⭐⭐":  ${two_stars}`;
-    one_star_string.textContent = `"⭐":  ${one_star}`;
-    average_rating_string.textContent = `Average rating:  ${average_rating.toFixed(2)}`;
-    stats_rating.replaceChildren(
-        five_stars_string,
-        four_stars_string,
-        three_stars_string,
-        two_stars_string,
-        one_star_string,
-        average_rating_string
-    )
-    let average_num_pages = 0;
-    for (const elem of subject){
-        average_num_pages += elem.num_pages;
-    }
-    average_num_pages = average_num_pages / size; //size is always greater then zero
-    const average_num_pages_string = document.createElement("div");
-    average_num_pages_string.textContent = `Average number of pages is   ${average_num_pages.toFixed(2)}`
-    stats_num_pages.replaceChildren(average_num_pages_string);
+    average_rating_stats.textContent = `Average rating:  ${average_rating.toFixed(2)}`;
+    average_num_pages_stats.textContent = `Average number of pages is   ${average_num_pages.toFixed(2)}`
+}
+user_stats_choice.addEventListener("change",(e)=>{
+    render_stats();
 })
